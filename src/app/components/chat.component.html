@@ -1,0 +1,151 @@
+<div class="chat-container">
+  <!-- Snowflakes background -->
+  <div class="snowflakes">
+    <div *ngFor="let flake of snowflakes()" 
+         class="snowflake" 
+         [style.left.%]="flake.left"
+         [style.animation-delay.s]="flake.delay">
+      ❄
+    </div>
+  </div>
+
+  <!-- Holiday lights -->
+  <div class="holiday-lights">
+    <div class="light red"></div>
+    <div class="light green"></div>
+    <div class="light yellow"></div>
+    <div class="light blue"></div>
+    <div class="light red"></div>
+    <div class="light green"></div>
+    <div class="light yellow"></div>
+    <div class="light blue"></div>
+  </div>
+
+  <mat-card class="chat-card">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-content">
+        <div class="garland-left" [ngClass]="{'ring': jingleState() !== ''}" (animationend)="jingleState.set('')">
+          🎄
+        </div>
+        <h1 class="chat-title">
+          <mat-icon class="title-icon">smart_toy</mat-icon>
+          Ollama Chat
+        </h1>
+        <div class="garland-right" [ngClass]="{'ring': jingleState() !== ''}" (animationend)="jingleState.set('')">
+          🎄
+        </div>
+      </div>
+      <button
+        mat-icon-button
+        (click)="clearChat()"
+        class="clear-btn"
+        [disabled]="messages().length === 0"
+        matTooltip="Clear conversation"
+      >
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+    </div>
+
+    <!-- Holiday banner -->
+    <div class="holiday-banner">
+      <span class="banner-text">✨ Holiday AI Assistant ✨</span>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Model Selection -->
+    <div class="model-selector">
+      <mat-form-field appearance="outline" class="model-field">
+        <mat-label>Select Model</mat-label>
+        <mat-select [ngModel]="selectedModel()" (ngModelChange)="selectedModel.set($event)">
+          <mat-option *ngFor="let model of availableModels()" [value]="model">
+            {{ model }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage()" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container" #messagesContainer>
+      <div *ngIf="messages().length === 0" class="empty-state">
+        <div class="snowman">⛄</div>
+        <p class="empty-text">No messages yet. Start a festive conversation!</p>
+        <div class="gift-boxes">
+          <span class="gift">🎁</span>
+          <span class="gift">🎁</span>
+          <span class="gift">🎁</span>
+        </div>
+      </div>
+
+      <div *ngFor="let message of messages()" [class.user-message]="message.role === 'user'" [class.assistant-message]="message.role === 'assistant'" class="message" @messageAnimation>
+        <div class="message-avatar" [class.spinning]="message.role === 'assistant'">
+          <mat-icon *ngIf="message.role === 'user'">person</mat-icon>
+          <span *ngIf="message.role === 'assistant'" class="santa-hat">🎅</span>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble">
+            <p>{{ message.content }}</p>
+          </div>
+          <span class="message-time">{{ message.timestamp | date : 'short' }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading()" class="loading-container">
+        <div class="message assistant-message">
+          <div class="message-avatar spinning">
+            <span class="santa-hat">🎅</span>
+          </div>
+          <div class="message-content">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <mat-form-field appearance="outline" class="message-input-field">
+        <mat-label>Type your message...</mat-label>
+        <textarea
+          matInput
+          [ngModel]="inputMessage()"
+          (ngModelChange)="inputMessage.set($event)"
+          (keypress)="onKeyPress($event)"
+          [disabled]="isLoading()"
+          placeholder="Ask me anything..."
+          rows="3"
+        ></textarea>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="sendMessage()"
+        [disabled]="isLoading() || !inputMessage().trim()"
+        class="send-btn"
+      >
+        <mat-icon>send</mat-icon>
+        Send
+      </button>
+    </div>
+
+    <!-- Footer with stars -->
+    <div class="footer-stars">
+      <span class="star">⭐</span>
+      <span class="star">⭐</span>
+      <span class="star">⭐</span>
+    </div>
+  </mat-card>
+</div>
