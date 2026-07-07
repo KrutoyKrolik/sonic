@@ -1,4 +1,5 @@
 # Sonic - AI Chat Application
+# Delivering conversational AI, IVR, virtual agent, speech recognition, routing, chat, messaging, or contact center automation solutions
 
 A modern Angular chat application powered by Ollama local LLMs, providing a streamlined interface for conversational AI.
 
